@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Editor</title>
+    <style>
+        #editor {
+            min-height: 90vh;
+            width: 90%;
+            margin: 60px auto 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            font-size: 18px;
+            line-height: 1.6;
+            outline: none;
+        }
+        .toolbar {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="guardar()">Guardar</button>
+        <button onclick="cargar()">Cargar</button>
+        <label>Color fondo: <input type="color" id="bgColor" value="#ffffff"></label>
+        <label>Color botones: <input type="color" id="btnColor" value="#007bff"></label>
+        <label>Color texto: <input type="color" id="textColor" value="#000000"></label>
+        <button onclick="aplicarColores()">Aplicar</button>
+    </div>
+    <div id="editor" contenteditable="true"></div>
+
+    <script>
+        function aplicarColores() {
+            const bgColor = document.getElementById('bgColor').value;
+            const btnColor = document.getElementById('btnColor').value;
+            const textColor = document.getElementById('textColor').value;
+            document.body.style.backgroundColor = bgColor;
+            document.getElementById('editor').style.color = textColor;
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.style.backgroundColor = btnColor;
+                btn.style.color = getContrastColor(btnColor);
+            });
+        }
+
+        function getContrastColor(hexColor) {
+            // Función para calcular color de texto contrastante
+            const r = parseInt(hexColor.substr(1, 2), 16);
+            const g = parseInt(hexColor.substr(3, 2), 16);
+            const b = parseInt(hexColor.substr(5, 2), 16);
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 128 ? '#000000' : '#ffffff';
+        }
+
+        function guardar() {
+            const contenido = document.getElementById('editor').innerHTML;
+            localStorage.setItem('documentoGuardado', contenido);
+            alert('Documento guardado localmente');
+        }
+
+        function cargar() {
+            const guardado = localStorage.getItem('documentoGuardado');
+            if (guardado) {
+                document.getElementById('editor').innerHTML = guardado;
+                alert('Documento cargado');
+            } else {
+                alert('No hay documento guardado');
+            }
+        }
+    </script>
+</body>
+</html>
